@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sub-Store 图标生成器</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .icon-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .icon-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .icon-box img {
+      display: block;
+      margin: 0 auto 10px;
+    }
+    .icon-box p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+    h1 { color: #1a1a2e; }
+    h2 { color: #333; margin-top: 30px; }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #6C63FF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    .btn:hover { background: #5A52D5; }
+    .instructions {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sub-Store Mobile 图标</h1>
+  
+  <div class="instructions">
+    <h2>使用说明</h2>
+    <p>1. 点击下方按钮下载各尺寸图标</p>
+    <p>2. 将下载的文件放入 <code>assets/</code> 目录</p>
+    <p>3. 替换现有的占位文件</p>
+  </div>
+
+  <div class="icon-preview">
+    <div class="icon-box">
+      <canvas id="icon1024" width="200" height="200"></canvas>
+      <p>icon.png (1024x1024)</p>
+      <button class="btn" onclick="downloadIcon('icon1024', 'icon.png', 1024)">下载</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="adaptive" width="200" height="200"></canvas>
+      <p>adaptive-icon.png (1024x1024)</p>
+      <button class="btn" onclick="downloadIcon('adaptive', 'adaptive-icon.png', 1024)">下载</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="splash" width="200" height="100"></canvas>
+      <p>splash.png (2048x2048)</p>
+      <button class="btn" onclick="downloadSplash()">下载</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="favicon" width="48" height="48"></canvas>
+      <p>favicon.png (48x48)</p>
+      <button class="btn" onclick="downloadIcon('favicon', 'favicon.png', 48)">下载</button>
+    </div>
+  </div>
+
+  <script>
+    function drawIcon(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#6C63FF');
+      gradient.addColorStop(1, '#4F46E5');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, canvas.width, canvas.height, size * 0.2);
+      ctx.fill();
+      
+      const scale = canvas.width / 1024;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = `bold ${180 * scale}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('S', centerX, centerY + 20 * scale);
+      
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 16 * scale;
+      ctx.lineCap = 'round';
+      
+      const arrowY = centerY - 80 * scale;
+      ctx.beginPath();
+      ctx.moveTo(centerX - 60 * scale, arrowY - 40 * scale);
+      ctx.lineTo(centerX, arrowY);
+      ctx.lineTo(centerX + 60 * scale, arrowY - 40 * scale);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(centerX - 60 * scale, arrowY + 60 * scale);
+      ctx.lineTo(centerX, arrowY + 20 * scale);
+      ctx.lineTo(centerX + 60 * scale, arrowY + 60 * scale);
+      ctx.stroke();
+    }
+    
+    drawIcon('icon1024', 1024);
+    drawIcon('adaptive', 1024);
+    drawIcon('favicon', 48);
+    
+    const splashCanvas = document.getElementById('splash');
+    const splashCtx = splashCanvas.getContext('2d');
+    const splashGradient = splashCtx.createLinearGradient(0, 0, splashCanvas.width, splashCanvas.height);
+    splashGradient.addColorStop(0, '#1a1a2e');
+    splashGradient.addColorStop(1, '#16213e');
+    splashCtx.fillStyle = splashGradient;
+    splashCtx.fillRect(0, 0, splashCanvas.width, splashCanvas.height);
+    
+    splashCtx.fillStyle = '#6C63FF';
+    splashCtx.beginPath();
+    splashCtx.arc(splashCanvas.width / 2, splashCanvas.height / 2 - 10, 30, 0, Math.PI * 2);
+    splashCtx.fill();
+    
+    splashCtx.fillStyle = 'white';
+    splashCtx.font = 'bold 24px Arial';
+    splashCtx.textAlign = 'center';
+    splashCtx.fillText('S', splashCanvas.width / 2, splashCanvas.height / 2);
+    
+    splashCtx.fillStyle = 'rgba(255,255,255,0.8)';
+    splashCtx.font = '12px Arial';
+    splashCtx.fillText('Sub-Store', splashCanvas.width / 2, splashCanvas.height / 2 + 50);
+    
+    function downloadIcon(canvasId, filename, targetSize) {
+      const sourceCanvas = document.getElementById(canvasId);
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = targetSize;
+      tempCanvas.height = targetSize;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(sourceCanvas, 0, 0, targetSize, targetSize);
+      
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = tempCanvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    function downloadSplash() {
+      const sourceCanvas = document.getElementById('splash');
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = 2048;
+      tempCanvas.height = 2048;
+      const tempCtx = tempCanvas.getContext('2d');
+      
+      const gradient = tempCtx.createLinearGradient(0, 0, 2048, 2048);
+      gradient.addColorStop(0, '#1a1a2e');
+      gradient.addColorStop(1, '#16213e');
+      tempCtx.fillStyle = gradient;
+      tempCtx.fillRect(0, 0, 2048, 2048);
+      
+      tempCtx.fillStyle = '#6C63FF';
+      tempCtx.beginPath();
+      tempCtx.arc(1024, 900, 200, 0, Math.PI * 2);
+      tempCtx.fill();
+      
+      tempCtx.fillStyle = 'white';
+      tempCtx.font = 'bold 180px Arial';
+      tempCtx.textAlign = 'center';
+      tempCtx.fillText('S', 1024, 960);
+      
+      tempCtx.fillStyle = 'rgba(255,255,255,0.9)';
+      tempCtx.font = '80px Arial';
+      tempCtx.fillText('Sub-Store', 1024, 1300);
+      
+      tempCtx.font = '40px Arial';
+      tempCtx.fillStyle = 'rgba(255,255,255,0.6)';
+      tempCtx.fillText('Advanced Subscription Manager', 1024, 1400);
+      
+      const link = document.createElement('a');
+      link.download = 'splash.png';
+      link.href = tempCanvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
