@@ -86,8 +86,32 @@ export interface Artifact {
 export interface Token {
   name: string;
   token: string;
-  type: 'sub' | 'collection';
+  type: 'sub' | 'col' | 'file';
   exp?: number;
+}
+
+export interface FileEntry {
+  name: string;
+  displayName?: string;
+  url?: string;
+  content?: string;
+  ua?: string;
+  download?: boolean;
+  proxy?: ProxyConfig;
+  createdAt?: number;
+  updatedAt?: number;
+  [key: string]: any;
+}
+
+export interface ArchiveEntry {
+  id: string;
+  itemType: 'sub' | 'col' | 'file' | 'artifact' | 'share';
+  name: string;
+  displayName?: string;
+  archivedAt: number;
+  snapshot: any;
+  shareType?: string;
+  [key: string]: any;
 }
 
 export interface AppSettings {

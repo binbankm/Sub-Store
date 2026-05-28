@@ -29,15 +29,15 @@ class StorageService {
     }
   }
 
-  async getTheme(): Promise<'light' | 'dark' | null> {
+  async getTheme(): Promise<'light' | 'dark' | 'auto' | null> {
     try {
-      return await SecureStore.getItemAsync(STORAGE_KEYS.THEME) as 'light' | 'dark' | null;
+      return await SecureStore.getItemAsync(STORAGE_KEYS.THEME) as 'light' | 'dark' | 'auto' | null;
     } catch {
       return null;
     }
   }
 
-  async setTheme(theme: 'light' | 'dark'): Promise<void> {
+  async setTheme(theme: 'light' | 'dark' | 'auto'): Promise<void> {
     try {
       await SecureStore.setItemAsync(STORAGE_KEYS.THEME, theme);
     } catch (error) {

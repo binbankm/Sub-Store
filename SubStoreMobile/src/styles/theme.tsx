@@ -55,7 +55,7 @@ export const Colors = {
   },
 };
 
-export type ThemeType = 'light' | 'dark';
+export type ThemeType = 'light' | 'dark' | 'auto';
 export type ColorScheme = typeof Colors.light;
 
 interface ThemeContextType {
@@ -66,7 +66,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'dark',
+  theme: 'auto',
   colors: Colors.dark,
   toggleTheme: () => {},
   setTheme: () => {},
@@ -76,7 +76,7 @@ export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemColorScheme = useColorScheme();
-  const [theme, setThemeState] = useState<ThemeType>('dark');
+  const [theme, setThemeState] = useState<ThemeType>('auto');
 
   useEffect(() => {
     loadTheme();
@@ -85,13 +85,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const loadTheme = async () => {
     try {
       const savedTheme = await SecureStore.getItemAsync('theme');
-      if (savedTheme === 'light' || savedTheme === 'dark') {
+      if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto') {
         setThemeState(savedTheme);
       } else {
-        setThemeState(systemColorScheme === 'light' ? 'light' : 'dark');
+        setThemeState('auto');
       }
     } catch {
-      setThemeState(systemColorScheme === 'light' ? 'light' : 'dark');
+      setThemeState('auto');
     }
   };
 
@@ -105,7 +105,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setTheme(newTheme);
   };
 
-  const colors = Colors[theme];
+  const resolvedTheme = theme === 'auto' ? (systemColorScheme === 'light' ? 'light' : 'dark') : theme;
+  const colors = Colors[resolvedTheme];
 
   return (
     <ThemeContext.Provider value={{ theme, colors, toggleTheme, setTheme }}>

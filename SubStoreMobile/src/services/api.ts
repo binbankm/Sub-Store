@@ -149,16 +149,28 @@ class ApiService {
     return this.request({ method: 'POST', url: '/api/sync/artifacts' });
   }
 
-  async getTokens(): Promise<ApiResponse<Token[]>> {
-    return this.request({ method: 'GET', url: '/api/tokens' });
+  async getTokens(params?: { type?: string; name?: string }): Promise<ApiResponse<Token[]>> {
+    return this.request({ method: 'GET', url: '/api/tokens', params });
   }
 
-  async createToken(token: Partial<Token>): Promise<ApiResponse<Token>> {
-    return this.request({ method: 'POST', url: '/api/tokens', data: token });
+  async createToken(
+    payload: { type: 'sub' | 'col' | 'file'; name: string; token?: string },
+    options?: { mode?: 'duration' | 'datetime'; expiresIn?: string; exp?: string | number }
+  ): Promise<ApiResponse<{ token: string }>> {
+    return this.request({ method: 'POST', url: '/api/token', data: { payload, options } });
   }
 
-  async deleteToken(name: string): Promise<ApiResponse<void>> {
-    return this.request({ method: 'DELETE', url: `/api/token/${encodeURIComponent(name)}` });
+  async deleteToken(
+    token: string,
+    type: 'sub' | 'col' | 'file',
+    name: string,
+    mode?: 'archive' | 'permanent'
+  ): Promise<ApiResponse<void>> {
+    return this.request({
+      method: 'DELETE',
+      url: `/api/token/${encodeURIComponent(token)}`,
+      params: { type, name, mode },
+    });
   }
 
   async getSettings(): Promise<ApiResponse<AppSettings>> {
@@ -213,8 +225,20 @@ class ApiService {
     return this.request({ method: 'GET', url: `/api/file/${encodeURIComponent(name)}` });
   }
 
+  async getWholeFile(name: string): Promise<ApiResponse<any>> {
+    return this.request({ method: 'GET', url: `/api/wholeFile/${encodeURIComponent(name)}` });
+  }
+
+  async createFile(file: { name?: string; content?: string; displayName?: string }): Promise<ApiResponse<any>> {
+    return this.request({ method: 'POST', url: '/api/files', data: file });
+  }
+
+  async updateFile(name: string, updates: Record<string, any>): Promise<ApiResponse<any>> {
+    return this.request({ method: 'PATCH', url: `/api/file/${encodeURIComponent(name)}`, data: updates });
+  }
+
   async uploadFile(name: string, content: string): Promise<ApiResponse<void>> {
-    return this.request({ method: 'POST', url: `/api/file/${encodeURIComponent(name)}`, data: { content } });
+    return this.request({ method: 'POST', url: '/api/files', data: { name, content } });
   }
 
   async deleteFile(name: string): Promise<ApiResponse<void>> {
@@ -226,19 +250,19 @@ class ApiService {
   }
 
   async archiveSubscription(name: string): Promise<ApiResponse<void>> {
-    return this.request({ method: 'POST', url: `/api/archive/sub/${encodeURIComponent(name)}` });
+    return this.request({ method: 'DELETE', url: `/api/sub/${encodeURIComponent(name)}`, params: { mode: 'archive' } });
   }
 
   async archiveCollection(name: string): Promise<ApiResponse<void>> {
-    return this.request({ method: 'POST', url: `/api/archive/collection/${encodeURIComponent(name)}` });
+    return this.request({ method: 'DELETE', url: `/api/collection/${encodeURIComponent(name)}`, params: { mode: 'archive' } });
   }
 
-  async restoreArchive(name: string): Promise<ApiResponse<void>> {
-    return this.request({ method: 'POST', url: `/api/archive/restore/${encodeURIComponent(name)}` });
+  async restoreArchive(id: string): Promise<ApiResponse<void>> {
+    return this.request({ method: 'POST', url: `/api/archives/${encodeURIComponent(id)}/restore` });
   }
 
-  async deleteArchive(name: string): Promise<ApiResponse<void>> {
-    return this.request({ method: 'DELETE', url: `/api/archive/${encodeURIComponent(name)}` });
+  async deleteArchive(id: string): Promise<ApiResponse<void>> {
+    return this.request({ method: 'DELETE', url: `/api/archives/${encodeURIComponent(id)}` });
   }
 
   async checkHealth(): Promise<boolean> {
